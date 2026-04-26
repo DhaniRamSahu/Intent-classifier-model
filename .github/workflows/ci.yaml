@@ -1,0 +1,26 @@
+name: List GCP Buckets
+on:
+  workflow_dispatch: # Allows you to run this manually for testing
+
+permissions:
+  id-token: write # Required for OIDC
+  contents: read
+
+jobs:
+  list-buckets:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - id: 'auth'
+        name: 'Authenticate to Google Cloud'
+        uses: 'google-github-actions/auth@v2'
+        with:
+          # Format: projects/PROJECT_NUMBER/locations/global/workloadIdentityPools/POOL_ID/providers/PROVIDER_ID
+          workload_identity_provider: 'projects/985041363268/locations/global/workloadIdentityPools/github/providers/github'
+          service_account: 'github@project-8e2ef078-09e8-478b-a2c.iam.gserviceaccount.com'
+
+      - name: 'List Buckets'
+        run: |-
+          gcloud storage buckets list
